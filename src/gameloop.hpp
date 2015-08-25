@@ -11,7 +11,7 @@ class GameLoop
 
 public:
     TCODList<Map*> maps;
-    Player *player;
+    Actor *player;
 
     GameLoop();
     ~GameLoop();
@@ -19,5 +19,7 @@ public:
     void render(Map *map);
     void update(Map * map);
 };
+
+extern GameLoop gameLoop;
 
 #endif // GAMELOOP_HPP_INCLUDED

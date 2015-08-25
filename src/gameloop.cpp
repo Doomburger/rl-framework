@@ -4,30 +4,35 @@
 
 static const int width = 80;
 static const int height = 50;
+extern int totalMaps;
 
 GameLoop::GameLoop() : endGame(false)
 {
     TCODConsole::initRoot(width, height, "Roguelike Framework", false);
     TCODConsole::root->setDefaultForeground(TCODColor::desaturatedAmber);
 
+    // Problematic code ahead
+    player = new Actor(40, 25, '@', TCODColor::red);
+    Map *map = new Map(width, height);
+    map->actors.push(player);
     maps.push(new Map(width, height));
-    Map **iterator = maps.begin();
-
+    delete map;
 }
 
 GameLoop::~GameLoop()
 {
-    delete player;
     maps.clear();
+    delete player;
 }
 
 bool GameLoop::beginLoop()
 {
+    Map **iterator = maps.begin();
+    GameLoop::render(*iterator);
+
     while(!endGame && !TCODConsole::isWindowClosed())
     {
-        TCOD_key_t key;
-
-        TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &key, NULL);
+        GameLoop::update(*iterator);
     }
 
     return true;
@@ -35,7 +40,7 @@ bool GameLoop::beginLoop()
 
 void GameLoop::render(Map *map)
 {
-    TCODConsole::root->clear();
+    TCODConsole::root->flush();
     map->render();
 }
 
@@ -43,33 +48,37 @@ void GameLoop::update(Map *map)
 {
     TCOD_key_t key;
     TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &key, NULL);
-/*
+
     switch(key.vk)
     {
-        case TCODK_UP:
+        case TCODK_KP8:
             if (map->isWalkable(player->x, player->y - 1))
             {
                 player->y--;
+                player->render();
             }
         break;
-        case TCODK_DOWN:
+        case TCODK_KP2:
             if (!map->isWalkable(player->x, player->y + 1))
             {
                 player->y++;
+                player->render();
             }
         break;
-        case TCODK_LEFT:
+        case TCODK_KP4:
             if (!map->isWalkable(player->x - 1, player->y))
             {
                 player->x--;
+                player->render();
             }
         break;
-        case TCODK_RIGHT:
+        case TCODK_KP6:
             if (!map->isWalkable(player-> x + 1, player->y))
             {
                 player->x++;
+                player->render();
             }
         break;
         default:break;
-*/
+    }
 }

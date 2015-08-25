@@ -1,11 +1,11 @@
 #include "libtcod.hpp"
 #include "gameloop.hpp"
+#include "map.hpp"
 using namespace std;
+
+GameLoop gameLoop;
 
 int main()
 {
-    GameLoop *gameloop = new GameLoop();
-    gameloop->beginLoop();
-
-    return 0;
+    gameLoop.beginLoop();
 }
