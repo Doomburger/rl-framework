@@ -1,4 +1,4 @@
-#include "libtncod.hpp"
+#include "libtcod.hpp"
 #include "map.hpp"
 #include "gameloop.hpp"
 #include <iostream>
@@ -118,5 +118,5 @@ void Map::render() const
         }
     }
 
-    TCODConsole::root->flush();
+    //TCODConsole::root->flush();
 }

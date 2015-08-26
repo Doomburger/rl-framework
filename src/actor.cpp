@@ -14,5 +14,4 @@ void Actor::render()
 {
     TCODConsole::root->setChar(x, y, ch);
     TCODConsole::root->setCharForeground(x, y, color);
-    TCODConsole::root->flush();
 }

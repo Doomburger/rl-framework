@@ -9,30 +9,30 @@ extern int totalMaps;
 GameLoop::GameLoop() : endGame(false)
 {
     TCODConsole::initRoot(width, height, "Roguelike Framework", false);
-    TCODConsole::root->setDefaultForeground(TCODColor::desaturatedAmber);
 
     // Problematic code ahead
     player = new Actor(40, 25, '@', TCODColor::red);
     Map *map = new Map(width, height);
     map->actors.push(player);
-    maps.push(new Map(width, height));
+    maps.push(map);
     delete map;
 }
 
 GameLoop::~GameLoop()
 {
-    maps.clear();
+    maps.clearAndDelete();
     delete player;
 }
 
 bool GameLoop::beginLoop()
 {
     Map **iterator = maps.begin();
-    GameLoop::render(*iterator);
 
     while(!endGame && !TCODConsole::isWindowClosed())
     {
         GameLoop::update(*iterator);
+        GameLoop::render(*iterator);
+        TCODConsole::root->flush();
     }
 
     return true;
@@ -40,8 +40,13 @@ bool GameLoop::beginLoop()
 
 void GameLoop::render(Map *map)
 {
-    TCODConsole::root->flush();
+    TCODConsole::root->clear();
     map->render();
+
+    for (Actor **iterator = map->actors.begin(); iterator != map->actors.end(); iterator++)
+    {
+        (*iterator)->render();
+    }
 }
 
 void GameLoop::update(Map *map)
@@ -55,28 +60,24 @@ void GameLoop::update(Map *map)
             if (map->isWalkable(player->x, player->y - 1))
             {
                 player->y--;
-                player->render();
             }
         break;
         case TCODK_KP2:
             if (!map->isWalkable(player->x, player->y + 1))
             {
                 player->y++;
-                player->render();
             }
         break;
         case TCODK_KP4:
             if (!map->isWalkable(player->x - 1, player->y))
             {
                 player->x--;
-                player->render();
             }
         break;
         case TCODK_KP6:
             if (!map->isWalkable(player-> x + 1, player->y))
             {
                 player->x++;
-                player->render();
             }
         break;
         default:break;
