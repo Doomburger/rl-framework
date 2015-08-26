@@ -15,11 +15,15 @@ GameLoop::GameLoop() : endGame(false)
     Map *map = new Map(width, height);
     map->actors.push(player);
     maps.push(map);
-    delete map;
+    //delete map; //Uncommenting results in no map being rendered. In retrospect, this makes sense.
 }
 
-GameLoop::~GameLoop()
+GameLoop::~GameLoop() //Clear the memory of all we've allocated so far.
 {
+    for (Map *iterator = *(maps.begin()); iterator != (*maps.end()); iterator++)
+    {
+        iterator->~Map();
+    }
     maps.clearAndDelete();
     delete player;
 }
@@ -63,19 +67,19 @@ void GameLoop::update(Map *map)
             }
         break;
         case TCODK_KP2:
-            if (!map->isWalkable(player->x, player->y + 1))
+            if (map->isWalkable(player->x, player->y + 1))
             {
                 player->y++;
             }
         break;
         case TCODK_KP4:
-            if (!map->isWalkable(player->x - 1, player->y))
+            if (map->isWalkable(player->x - 1, player->y))
             {
                 player->x--;
             }
         break;
         case TCODK_KP6:
-            if (!map->isWalkable(player-> x + 1, player->y))
+            if (map->isWalkable(player-> x + 1, player->y))
             {
                 player->x++;
             }

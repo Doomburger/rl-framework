@@ -8,7 +8,6 @@ class GameLoop
     bool exitedCorrectly;
     bool endGame;
 
-
 public:
     TCODList<Map*> maps;
     Actor *player;

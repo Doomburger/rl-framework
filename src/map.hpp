@@ -8,8 +8,8 @@ class Tile
 public:
     bool canWalk;
 
-    Tile() : canWalk(true);
-}
+    Tile() : canWalk(true){};
+};
 
 class Map : public TCODMap::TCODMap
 {
