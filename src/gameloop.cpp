@@ -4,13 +4,12 @@
 
 static const int width = 80;
 static const int height = 50;
-extern int totalMaps;
 
 GameLoop::GameLoop() : endGame(false)
 {
     TCODConsole::initRoot(width, height, "Roguelike Framework", false);
 
-    // Problematic code ahead
+    // Potentially problematic code ahead
     player = new Actor(40, 25, '@', TCODColor::red);
     Map *map = new Map(width, height);
     map->actors.push(player);
@@ -20,9 +19,9 @@ GameLoop::GameLoop() : endGame(false)
 
 GameLoop::~GameLoop() //Clear the memory of all we've allocated so far.
 {
-    for (Map *iterator = *(maps.begin()); iterator != (*maps.end()); iterator++)
+    for (Map **iterator = maps.begin(); iterator != maps.end(); iterator++)
     {
-        iterator->~Map();
+        (*iterator)->~Map();
     }
     maps.clearAndDelete();
     delete player;
@@ -61,25 +60,25 @@ void GameLoop::update(Map *map)
     switch(key.vk)
     {
         case TCODK_KP8:
-            if (map->isWalkable(player->x, player->y - 1))
+            if (map->getTile(player->x, player->y - 1).canWalk)
             {
                 player->y--;
             }
         break;
         case TCODK_KP2:
-            if (map->isWalkable(player->x, player->y + 1))
+            if (map->getTile(player->x, player->y + 1).canWalk)
             {
                 player->y++;
             }
         break;
         case TCODK_KP4:
-            if (map->isWalkable(player->x - 1, player->y))
+            if (map->getTile(player->x - 1, player->y).canWalk)
             {
                 player->x--;
             }
         break;
         case TCODK_KP6:
-            if (map->isWalkable(player-> x + 1, player->y))
+            if (map->getTile(player->x + 1, player->y).canWalk)
             {
                 player->x++;
             }

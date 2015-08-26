@@ -4,11 +4,11 @@
 
 class Actor
 {
-    int ch;
-    TCODColor color;
 
 public:
     int x, y;
+    int ch;
+    TCODColor color;
 
     Actor(int x, int y, int ch, TCODColor color);
     Actor();
