@@ -44,7 +44,7 @@ public:
     }
 };
 
-Map::Map(int width, int height) : TCODMap::TCODMap(width, height), width(width), height(height)
+Map::Map(int width, int height) : TCODMap::TCODMap(width, height), width(width), height(height), playerSpawned(false)
 {
     tiles = new Tile[width * height];
     TCODBsp bsp(0, 0, width, height);
@@ -73,7 +73,6 @@ void Map::dig(int x1, int y1, int x2, int y2)
         for (int tileY = y1; tileY <= y2; tileY++)
         {
             tiles[tileX + tileY * width].canWalk=true;
-            //Map::setProperties(tileX, tileY, true, true); // Possibly erroneous
         }
     }
 }
@@ -82,15 +81,14 @@ void Map::createRoom(int x1, int y1, int x2, int y2)
 {
     dig(x1, y1, x2, y2);
 
-    if (actors.isEmpty())
+    if (!playerSpawned)
     {
-        gameLoop.player->x = (x1 + x2) / 2;
-        gameLoop.player->y = (x2 + y2) / 2;
-        actors.push(gameLoop.player);
-        gameLoop.player->render();
+        actors.push(new Actor((x1 + x2) / 2, (y1 + y2) / 2, '@', TCODColor::red));
+        localPlayer = *(actors.begin());
+        playerSpawned = true;
     }
     else
-    {   //Very broken - actors often spawn inside walls.
+    {
         TCODRandom *rng = TCODRandom::getInstance();
         if (rng->getInt(0, 3) == 0)
         {
@@ -118,5 +116,10 @@ void Map::render() const
             else
                 TCODConsole::root->setCharBackground(x, y, darkWallDefault);
         }
+    }
+
+    for (Actor **iterator = actors.begin(); iterator != actors.end(); iterator++)
+    {
+        (*iterator)->render();
     }
 }

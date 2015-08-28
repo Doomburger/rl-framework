@@ -16,6 +16,9 @@ class Map : public TCODMap::TCODMap
 protected:
     Tile *tiles;
     friend class BspListener; //To be altered in the future
+    friend class GameLoop;
+    Actor *localPlayer;
+    bool playerSpawned;
 
     void dig(int x1, int y1, int x2, int y2); //To be altered in the future
     void createRoom(int x1, int y1, int x2, int y2); //To be altered in the future
