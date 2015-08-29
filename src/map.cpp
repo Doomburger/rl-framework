@@ -55,6 +55,25 @@ Map::Map(int width, int height) : TCODMap::TCODMap(width, height), width(width),
     bsp.traverseInvertedLevelOrder(&listener, NULL);
 }
 
+bool Map::canWalk(int x, int y) const
+{
+    if (!isWalkable(x, y))
+        return false;
+
+    for (Actor **iterator = actors.begin(); iterator != actors.end(); iterator++)
+    {
+        if((*iterator)->x < width && ((*iterator)->y) < height)
+        {
+            if ((*iterator)->x == x && (*iterator)->y == y)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 bool Map::isExplored(int x, int y) const
 {
     return tiles[x + y * width].explored;

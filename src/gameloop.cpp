@@ -58,28 +58,28 @@ void GameLoop::update(Map *map)
     switch(key.vk)
     {
         case TCODK_KP8:
-            if (map->isWalkable(map->localPlayer->x, map->localPlayer->y - 1))
+            if (map->canWalk(map->localPlayer->x, map->localPlayer->y - 1))
             {
                 map->localPlayer->y--;
                 computeFov = true;
             }
         break;
         case TCODK_KP2:
-            if (map->isWalkable(map->localPlayer->x, map->localPlayer->y + 1))
+            if (map->canWalk(map->localPlayer->x, map->localPlayer->y + 1))
             {
                 map->localPlayer->y++;
                 computeFov = true;
             }
         break;
         case TCODK_KP4:
-            if (map->isWalkable(map->localPlayer->x - 1, map->localPlayer->y))
+            if (map->canWalk(map->localPlayer->x - 1, map->localPlayer->y))
             {
                 map->localPlayer->x--;
                 computeFov = true;
             }
         break;
         case TCODK_KP6:
-            if (map->isWalkable(map->localPlayer->x + 1, map->localPlayer->y))
+            if (map->canWalk(map->localPlayer->x + 1, map->localPlayer->y))
             {
                 map->localPlayer->x++;
                 computeFov = true;
