@@ -32,6 +32,7 @@ public:
     bool isExplored(int x, int y) const;
     bool isInView(int x, int y) const;
     bool canWalk(int x, int y) const;
+    void addEnemy(int x, int y);
 };
 
 extern int totalMaps;

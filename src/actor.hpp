@@ -9,11 +9,11 @@ public:
     int x, y;
     int ch;
     TCODColor color;
-    char *ID;
+    const char *name;
 
     Actor();
     Actor(int x, int y, int ch, TCODColor color);
-    Actor(int x, int y, int ch, TCODColor color, char *ID);
+    Actor(int x, int y, int ch, TCODColor color, const char *name);
 
     void render();
 };

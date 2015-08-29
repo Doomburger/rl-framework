@@ -12,7 +12,7 @@ GameLoop::GameLoop() : endGame(false)
 
     // Potentially problematic code ahead
     player = new Actor();
-    player->ID = "player\0";
+    player->name = "player\0";
     Map *map = new Map(width, height);
     map->actors.push(player);
     maps.push(map);

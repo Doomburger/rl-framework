@@ -7,6 +7,7 @@
 extern GameLoop gameLoop;
 static const int ROOM_MAX_SIZE = 12;
 static const int ROOM_MIN_SIZE = 6;
+static const int ROOM_MAX_ENEMIES = 6;
 extern int fov_max_radius;
 
 class BspListener : public ITCODBspCallback
@@ -53,6 +54,19 @@ Map::Map(int width, int height) : TCODMap::TCODMap(width, height), width(width),
     bsp.splitRecursive(NULL, 8, ROOM_MAX_SIZE, ROOM_MAX_SIZE, 1.5f, 1.5f);
     BspListener listener(*this);
     bsp.traverseInvertedLevelOrder(&listener, NULL);
+}
+
+void Map::addEnemy(int x, int y)
+{
+    TCODRandom *rng = TCODRandom::getInstance();
+    if (rng->getInt(0, 100) < 80)
+    {
+        actors.push(new Actor(x, y, 'o', TCODColor::azure, "blackguard"));
+    }
+    else
+    {
+        actors.push(new Actor(x, y, 'K', TCODColor::black, "black_knight"));
+    }
 }
 
 bool Map::canWalk(int x, int y) const
@@ -117,9 +131,17 @@ void Map::createRoom(int x1, int y1, int x2, int y2)
     else
     {
         TCODRandom *rng = TCODRandom::getInstance();
-        if (rng->getInt(0, 3) == 0)
+        int nbEnemies = rng->getInt(0, ROOM_MAX_ENEMIES);
+
+        while(nbEnemies > 0)
         {
-            actors.push(new Actor((x1 + x2) / 2, (y1 + y2) / 2, '@', TCODColor::azure));
+            int x = rng->getInt(x1, x2);
+            int y = rng->getInt(y1, y2);
+
+            if(canWalk(x, y))
+                addEnemy(x, y);
+
+            nbEnemies--;
         }
     }
 }

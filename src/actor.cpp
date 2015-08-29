@@ -10,7 +10,7 @@ Actor::Actor(int x, int y, int ch, TCODColor color) : x(x), y(y), ch(ch), color(
 
 }
 
-Actor::Actor(int x, int y, int ch, TCODColor color, char *ID) : x(x), y(y), ch(ch), color(color), ID(ID)
+Actor::Actor(int x, int y, int ch, TCODColor color, const char *name) : x(x), y(y), ch(ch), color(color), name(name)
 {
 
 }
