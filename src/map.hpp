@@ -6,9 +6,9 @@
 class Tile
 {
 public:
-    bool canWalk;
+    bool explored;
 
-    Tile() : canWalk(false){};
+    Tile() : explored(false){};
 };
 
 class Map : public TCODMap::TCODMap
@@ -29,6 +29,8 @@ public:
     TCODList<Actor*> actors;
     int width, height;
     Tile getTile(int x, int y);
+    bool isExplored(int x, int y) const;
+    bool isInView(int x, int y) const;
 };
 
 extern int totalMaps;

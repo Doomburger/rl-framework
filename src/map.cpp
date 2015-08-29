@@ -2,10 +2,12 @@
 #include "map.hpp"
 #include "gameloop.hpp"
 #include <iostream>
+#include <conio.h>
 
 extern GameLoop gameLoop;
 static const int ROOM_MAX_SIZE = 12;
 static const int ROOM_MIN_SIZE = 6;
+extern int fov_max_radius;
 
 class BspListener : public ITCODBspCallback
 {
@@ -53,6 +55,11 @@ Map::Map(int width, int height) : TCODMap::TCODMap(width, height), width(width),
     bsp.traverseInvertedLevelOrder(&listener, NULL);
 }
 
+bool Map::isExplored(int x, int y) const
+{
+    return tiles[x + y * width].explored;
+}
+
 void Map::dig(int x1, int y1, int x2, int y2)
 {
     if (x2 < x1)
@@ -72,7 +79,7 @@ void Map::dig(int x1, int y1, int x2, int y2)
     {
         for (int tileY = y1; tileY <= y2; tileY++)
         {
-            tiles[tileX + tileY * width].canWalk=true;
+            setProperties(tileX, tileY, true, true);
         }
     }
 }
@@ -83,16 +90,17 @@ void Map::createRoom(int x1, int y1, int x2, int y2)
 
     if (!playerSpawned)
     {
-        actors.push(new Actor((x1 + x2) / 2, (y1 + y2) / 2, '@', TCODColor::red));
+        actors.push(new Actor((x1 + x2) / 2, (y1 + y2) / 2, '@', TCODColor::red, "localplayer\0"));
         localPlayer = *(actors.begin());
         playerSpawned = true;
+        computeFov(localPlayer->x, localPlayer->y, fov_max_radius, true, FOV_BASIC);
     }
     else
     {
         TCODRandom *rng = TCODRandom::getInstance();
         if (rng->getInt(0, 3) == 0)
         {
-            actors.push(new Actor((x1 + x2) / 2, (y1 + y2) / 2, '@', TCODColor::yellow));
+            actors.push(new Actor((x1 + x2) / 2, (y1 + y2) / 2, '@', TCODColor::azure));
         }
     }
 }
@@ -102,24 +110,45 @@ Tile Map::getTile(int x, int y)
     return tiles[x + y * width];
 }
 
+bool Map::isInView(int x, int y) const
+{
+    if (isInFov(x, y))
+    {
+        tiles[x + y * width].explored = true;
+        return true;
+    }
+    return false;
+}
+
 void Map::render() const
 {
-    static const TCODColor darkWallDefault = TCODColor::amber;
-    static const TCODColor darkFloorDefault = TCODColor::desaturatedAmber;
+    static const TCODColor darkWallDefault = TCODColor::desaturatedGreen;
+    static const TCODColor darkFloorDefault = TCODColor::desaturatedLime;
+    static const TCODColor lightWallDefault = TCODColor::green;
+    static const TCODColor lightFloorDefault = TCODColor::lime;
 
     for (int x = 0; x < width; x++)
     {
         for (int y = 0; y < height; y++)
         {
-            if (tiles[x + y * width].canWalk)
-                TCODConsole::root->setCharBackground(x, y, darkFloorDefault);
-            else
-                TCODConsole::root->setCharBackground(x, y, darkWallDefault);
+            if (isInView(x, y))
+            {
+                TCODConsole::root->setCharBackground(x, y, !isWalkable(x, y) ? lightWallDefault : lightFloorDefault);
+            }
+            else if (isExplored(x, y))
+            {
+                TCODConsole::root->setCharBackground(x, y, !isWalkable(x, y) ? darkWallDefault : darkFloorDefault);
+            }
         }
     }
 
-    for (Actor **iterator = actors.begin(); iterator != actors.end(); iterator++)
+    if(!actors.isEmpty())
     {
-        (*iterator)->render();
+        for (Actor **iterator = actors.begin(); iterator != actors.end(); iterator++)
+        {
+            if((*iterator)->x < width && ((*iterator)->y) < height)
+                if(isInView((*iterator)->x, (*iterator)->y))
+                    (*iterator)->render();
+        }
     }
 }
